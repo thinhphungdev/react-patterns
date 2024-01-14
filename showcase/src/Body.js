@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import styled from 'styled-components'
-import { Router } from '@reach/router'
-import { HEADER_ALLOWANCE } from './utils/constants'
-import { Home } from './content'
+import React, { useState, useEffect, useCallback } from 'react';
+import styled from 'styled-components';
+import { Router } from '@reach/router';
+import { HEADER_ALLOWANCE } from './utils/constants';
+import { Home } from './content';
 import {
   media,
   StyledFloatingBtn,
@@ -13,16 +13,16 @@ import {
   Columns,
   Column,
   Box,
-  CTAContainer
-} from './content/StyledContent'
-import Button from './Button'
-import { NOTES } from './constants/displayBoxNotes'
-import { INFO } from './constants/patternInfo'
+  CTAContainer,
+} from './content/StyledContent';
+import Button from './Button';
+import { NOTES } from './constants/displayBoxNotes';
+import { INFO } from './constants/patternInfo';
 
-import GithubLogo from './assets/github_logo.svg'
-import InfoIllustration from './assets/light_bulb.svg'
-import { useAnimatedBulb } from './content/useAnimatedBulb'
-import { useAnimatedInfo } from './content/useAnimatedInfo'
+import GithubLogo from './assets/github_logo.svg';
+import InfoIllustration from './assets/light_bulb.svg';
+import { useAnimatedBulb } from './content/useAnimatedBulb';
+import { useAnimatedInfo } from './content/useAnimatedInfo';
 
 const StyledAppBody = styled.div`
   background: #191921;
@@ -31,7 +31,7 @@ const StyledAppBody = styled.div`
   ${media.md`
     padding: ${() => `${HEADER_ALLOWANCE}vh 0`};
   `}
-`
+`;
 
 const patterns = [
   'the-medium-clap',
@@ -42,54 +42,49 @@ const patterns = [
   'props-collection',
   'prop-getters',
   'state-initializers',
-  'state-reducers'
-]
-
-const PR_ROOT =
-  'https://github.com/ohansemmanuel/advanced-react-patterns-ultrasimplified/pull'
-const PR_IDs = [1, 16, 17, 19, 6, 7, 8, 9, 10, 12]
-const PRs = PR_IDs.map(id => `${PR_ROOT}/${id}`)
+  'state-reducers',
+];
 
 const Header = ({ title, patternNumber }) => {
   // animated el
-  const [{ lightBulbEl, infoEl, infoTextEl }, setRefState] = useState({})
+  const [{ lightBulbEl, infoEl, infoTextEl }, setRefState] = useState({});
 
-  const setRef = useCallback(node => {
+  const setRef = useCallback((node) => {
     if (node !== null) {
-      setRefState(prevRefState => ({
+      setRefState((prevRefState) => ({
         ...prevRefState,
-        [node.dataset.refkey]: node
-      }))
+        [node.dataset.refkey]: node,
+      }));
     }
-  }, [])
+  }, []);
 
   const animatedBulbTimeline = useAnimatedBulb({
-    el: lightBulbEl
-  })
+    el: lightBulbEl,
+  });
   const animatedInfoTimeline = useAnimatedInfo({
     bgEl: infoEl,
-    textEl: infoTextEl
-  })
+    textEl: infoTextEl,
+  });
 
   // toggle info display
-  const [isInfoShown, setInfoShown] = useState(false)
+  const [isInfoShown, setInfoShown] = useState(false);
 
   const toggleInfo = () => {
-    setInfoShown(isInfoShown => !isInfoShown)
-    animatedBulbTimeline.replay()
-  }
+    setInfoShown((isInfoShown) => !isInfoShown);
+    animatedBulbTimeline.replay();
+  };
 
   useEffect(() => {
     if (!isInfoShown) {
-      return
+      return;
     }
 
     const timer = setTimeout(() => {
-      animatedInfoTimeline.replay()
-    }, 100)
+      animatedInfoTimeline.replay();
+    }, 100);
 
-    return () => clearTimeout(timer)
-  }, [isInfoShown])
+    return () => clearTimeout(timer);
+  }, [isInfoShown]);
 
   return (
     <StyledHeader>
@@ -108,38 +103,35 @@ const Header = ({ title, patternNumber }) => {
         />
       </div>
     </StyledHeader>
-  )
-}
+  );
+};
 
 const RouteComponent = ({ pattern, patternNumber, isMediumOrLarger }) => {
-  const firstLetterCap = str => str.slice(0, 1).toUpperCase() + str.slice(1)
-  const title = pattern
-    .split('-')
-    .map(firstLetterCap)
-    .join(' ')
+  const firstLetterCap = (str) => str.slice(0, 1).toUpperCase() + str.slice(1);
+  const title = pattern.split('-').map(firstLetterCap).join(' ');
 
-  const indexToTwoDigits = i => (i < 10 ? `0${i}` : i)
+  const indexToTwoDigits = (i) => (i < 10 ? `0${i}` : i);
   const beforeAndAfterPatternNumbers = [patternNumber, patternNumber + 1].map(
     indexToTwoDigits
-  )
+  );
 
   // Demo to be shown in Display Boxes
-  let Demo1, Demo2
+  let Demo1, Demo2;
   try {
-    Demo1 = require(`./patterns/${beforeAndAfterPatternNumbers[0]}`).default
+    Demo1 = require(`./patterns/${beforeAndAfterPatternNumbers[0]}`).default;
   } catch (error) {
-    Demo1 = () => null
+    Demo1 = () => null;
   }
   try {
-    Demo2 = require(`./patterns/${beforeAndAfterPatternNumbers[1]}`).default
+    Demo2 = require(`./patterns/${beforeAndAfterPatternNumbers[1]}`).default;
   } catch (error) {
-    Demo2 = () => null
+    Demo2 = () => null;
   }
 
   const goToCodeImplementatiomn = () => {
-    const newWindow = window.open(PRs[patternNumber], 'blank')
-    newWindow.opener = null
-  }
+    const newWindow = window.open(PRs[patternNumber], 'blank');
+    newWindow.opener = null;
+  };
 
   return (
     <StyledContentContainer>
@@ -177,11 +169,11 @@ const RouteComponent = ({ pattern, patternNumber, isMediumOrLarger }) => {
         </Column>
       </Columns>
     </StyledContentContainer>
-  )
-}
+  );
+};
 
 const Body = ({ setShowSidebar, isMediumOrLarger }) => {
-  const toggleSidebar = () => setShowSidebar(val => !val)
+  const toggleSidebar = () => setShowSidebar((val) => !val);
 
   return (
     <StyledAppBody>
@@ -201,7 +193,7 @@ const Body = ({ setShowSidebar, isMediumOrLarger }) => {
         <StyledFloatingBtn onClick={toggleSidebar}>+</StyledFloatingBtn>
       )}
     </StyledAppBody>
-  )
-}
+  );
+};
 
-export default Body
+export default Body;
