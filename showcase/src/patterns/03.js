@@ -126,7 +126,7 @@ const useMediumClapContext = () => {
   return context;
 };
 
-const MediumClap = ({ children }) => {
+const MediumClap = ({ children, onClap }) => {
   const [clapState, setClapState] = useState(initialState);
   const { count, countTotal } = clapState;
   const [{ clapRef, clapCountRef, clapCountTotalRef }, setRefState] = useState(
@@ -156,6 +156,8 @@ const MediumClap = ({ children }) => {
       countTotal: count < MAXIMUM_USER_CLAP ? countTotal + 1 : countTotal,
       isClicked: true,
     });
+
+    onClap(clapState);
   };
 
   const memoizedMediumClapContextValue = useMemo(
@@ -228,12 +230,20 @@ MediumClap.Total = CountTotal;
   ==================================== **/
 
 const Usage = () => {
+  const [count, setCount] = useState(0);
+
+  function handleClap(clapState) {
+    setCount(clapState.count + 1);
+  }
   return (
-    <MediumClap>
-      <MediumClap.Icon />
-      <MediumClap.Count />
-      <MediumClap.Total />
-    </MediumClap>
+    <div style={{ width: '100%' }}>
+      <MediumClap onClap={handleClap}>
+        <MediumClap.Icon />
+        <MediumClap.Count />
+        <MediumClap.Total />
+      </MediumClap>
+      <div>You have clapped: {count}</div>
+    </div>
   );
 };
 
