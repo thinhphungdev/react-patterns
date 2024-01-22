@@ -12,8 +12,8 @@ import styles from './index.css';
 import userCustomeStyles from './usage.css';
 
 /** ====================================
-     *         Custom Hook for animations
-    ==================================== **/
+       *         Custom Hook for animations
+      ==================================== **/
 const useClapAnimation = ({ clapRef, clapCountRef, clapCountTotalRef }) => {
   const [animationTimeline, setAnimationTimeline] = useState(
     () => new mojs.Timeline()
@@ -109,8 +109,8 @@ const useClapAnimation = ({ clapRef, clapCountRef, clapCountTotalRef }) => {
 };
 
 /** ====================================
-     *      🔰 MediumClap
-    ==================================== **/
+       *      🔰 MediumClap
+      ==================================== **/
 const initialState = {
   count: 0,
   countTotal: generateRandomNumber(500, 10000),
@@ -131,6 +131,7 @@ const MediumClap = ({
   onClap,
   style: userStyles = {},
   classNames = '',
+  values = null,
 }) => {
   const [clapState, setClapState] = useState(initialState);
   const { count, countTotal } = clapState;
@@ -153,21 +154,30 @@ const MediumClap = ({
     });
   }, []);
 
+  const isControlled = values && onClap;
+
+  function getState() {
+    return isControlled ? values : clapState;
+  }
+
   const handleClapClick = () => {
     animationTimeline.replay();
+
+    if (isControlled) {
+      onClap();
+      return;
+    }
 
     setClapState({
       count: Math.min(count + 1, MAXIMUM_USER_CLAP),
       countTotal: count < MAXIMUM_USER_CLAP ? countTotal + 1 : countTotal,
       isClicked: true,
     });
-
-    onClap(clapState);
   };
 
   const memoizedMediumClapContextValue = useMemo(
-    () => ({ ...clapState, setref }),
-    [clapState, setref]
+    () => ({ ...getState(), setref }),
+    [clapState, values, setref]
   );
 
   return (
@@ -186,9 +196,9 @@ const MediumClap = ({
 };
 
 /** ====================================
-     *      🔰SubComponents
-    Smaller Component used by <MediumClap />
-    ==================================== **/
+       *      🔰SubComponents
+      Smaller Component used by <MediumClap />
+      ==================================== **/
 
 const ClapIcon = ({ style: userStyles, classNames = '' }) => {
   const { isClicked } = useMediumClapContext();
@@ -242,26 +252,51 @@ MediumClap.Count = ClapCount;
 MediumClap.Total = CountTotal;
 
 /** ====================================
-        *        🔰USAGE
-        Below's how a potential user
-        may consume the component API
-    ==================================== **/
+          *        🔰USAGE
+          Below's how a potential user
+          may consume the component API
+      ==================================== **/
+
+const INIT_STATE = {
+  count: 0,
+  countTotal: 210,
+  isClicked: false,
+};
 
 const Usage = () => {
-  const [count, setCount] = useState(0);
+  const [countState, setCountState] = useState(INIT_STATE);
 
-  function handleClap(clapState) {
-    setCount(clapState.count + 1);
+  function handleClap() {
+    setCountState(({ count, countTotal }) => {
+      return {
+        count: Math.min(count + 1, 10),
+        countTotal: count < 10 ? countTotal + 1 : countTotal,
+        isClicked: true,
+      };
+    });
   }
 
   return (
     <div style={{ width: '100%' }}>
-      <MediumClap onClap={handleClap} classNames={userCustomeStyles.clap}>
+      <MediumClap
+        values={countState}
+        onClap={handleClap}
+        classNames={userCustomeStyles.clap}
+      >
         <MediumClap.Icon classNames={userCustomeStyles.icon} />
         <MediumClap.Count classNames={userCustomeStyles.count} />
         <MediumClap.Total classNames={userCustomeStyles.total} />
       </MediumClap>
-      <div>You have clapped: {count}</div>
+
+      <MediumClap
+        values={countState}
+        onClap={handleClap}
+        classNames={userCustomeStyles.clap}
+      >
+        <MediumClap.Icon classNames={userCustomeStyles.icon} />
+        <MediumClap.Count classNames={userCustomeStyles.count} />
+        <MediumClap.Total classNames={userCustomeStyles.total} />
+      </MediumClap>
     </div>
   );
 };
