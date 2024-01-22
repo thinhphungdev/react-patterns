@@ -255,7 +255,7 @@ MediumClap.Total = CountTotal;
           *        🔰USAGE
           Below's how a potential user
           may consume the component API
-      ==================================== **/
+  ==================================== **/
 
 const INIT_STATE = {
   count: 0,

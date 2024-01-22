@@ -199,6 +199,7 @@ const ClapIcon = ({ isClicked }) => {
     </span>
   );
 };
+
 const ClapCount = ({ count, setref }) => {
   return (
     <span ref={setref} data-refkey='clapCountRef' className={styles.count}>
@@ -206,6 +207,7 @@ const ClapCount = ({ count, setref }) => {
     </span>
   );
 };
+
 const CountTotal = ({ countTotal, setref }) => {
   return (
     <span ref={setref} data-refkey='clapCountTotal' className={styles.total}>
@@ -225,8 +227,3 @@ const Usage = () => {
 };
 
 export default Usage;
-
-// HOC
-// Render props
-// Compound component patterns
-// Hooks
