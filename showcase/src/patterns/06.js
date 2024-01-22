@@ -133,8 +133,23 @@ function useDOMRef() {
   return [DOMref, setref];
 }
 
-const MediumClap = () => {
+function useClapState(initialState) {
   const [clapState, setClapState] = useState(initialState);
+  const { count, countTotal } = clapState;
+
+  const updateClapState = () => {
+    setClapState({
+      count: Math.min(count + 1, MAXIMUM_USER_CLAP),
+      countTotal: count < MAXIMUM_USER_CLAP ? countTotal + 1 : countTotal,
+      isClicked: true,
+    });
+  };
+
+  return [clapState, updateClapState];
+}
+
+const MediumClap = () => {
+  const [clapState, updateClapState] = useClapState(initialState);
   const { count, countTotal, isClicked } = clapState;
   const [{ clapRef, clapCountRef, clapCountTotalRef }, setref] = useDOMRef();
 
@@ -147,11 +162,7 @@ const MediumClap = () => {
   const handleClapClick = () => {
     animationTimeline.replay();
 
-    setClapState({
-      count: Math.min(count + 1, MAXIMUM_USER_CLAP),
-      countTotal: count < MAXIMUM_USER_CLAP ? countTotal + 1 : countTotal,
-      isClicked: true,
-    });
+    updateClapState();
   };
 
   return (
