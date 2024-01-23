@@ -134,7 +134,7 @@ const useDOMRef = () => {
 /**
  * custom hook for useClapState
  */
-function reducer(state, action) {
+function internalReducer(state, action) {
   switch (action.type) {
     case 'clap':
       return {
@@ -152,7 +152,10 @@ function reducer(state, action) {
 
 const MAXIMUM_USER_CLAP = 50;
 
-const useClapState = (initialState = INITIAL_STATE) => {
+const useClapState = (
+  initialState = INITIAL_STATE,
+  reducer = internalReducer
+) => {
   const [clapState, dispatch] = useReducer(reducer, initialState);
   const { count } = clapState;
 
@@ -189,6 +192,12 @@ const useClapState = (initialState = INITIAL_STATE) => {
     getCounterProps,
     reset,
   };
+};
+
+useClapState.reducer = internalReducer;
+useClapState.types = {
+  clap: 'clap',
+  reset: 'reset',
 };
 
 /**
@@ -263,8 +272,14 @@ const userInitState = {
 };
 
 const Usage = () => {
-  const { clapState, getTogglerProps, getCounterProps, reset } =
-    useClapState(userInitState);
+  function customReducer(state, action) {
+    return state;
+  }
+
+  const { clapState, getTogglerProps, getCounterProps, reset } = useClapState(
+    userInitState,
+    customReducer
+  );
 
   const { count, countTotal, isClicked } = clapState;
 
