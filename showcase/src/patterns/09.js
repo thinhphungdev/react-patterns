@@ -268,6 +268,10 @@ const Usage = () => {
     animationTimeline.replay();
   }, [count]);
 
+  const [uploading, setUpload] = useState(false);
+
+  useEffectAfterMount(() => {}, []);
+
   return (
     <div>
       <ClapContainer
