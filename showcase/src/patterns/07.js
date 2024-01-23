@@ -146,7 +146,7 @@ const useClapState = (initialState = INITIAL_STATE) => {
   }, [count, countTotal]);
 
   // props collection for 'click'
-  const getTogglerProps = (onClick, ...otherProps) => {
+  const getTogglerProps = ({ onClick, ...otherProps }) => {
     return {
       onClick: callFnsInSequence(updateClapState, onClick),
       'aria-pressed': clapState.isClicked,
@@ -155,12 +155,13 @@ const useClapState = (initialState = INITIAL_STATE) => {
   };
 
   // props collection for 'count'
-  const getCounterProps = () => {
+  const getCounterProps = ({ ...otherProps }) => {
     return {
       count,
       'aria-valuemax': MAXIMUM_USER_CLAP,
       'aria-valuemin': 0,
       'aria-valuenow': count,
+      ...otherProps,
     };
   };
 
