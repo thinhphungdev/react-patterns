@@ -107,6 +107,16 @@ const useClapAnimation = ({ clapRef, clapCountRef, clapCountTotalRef }) => {
   return animationTimeline;
 };
 
+const useEffectAfterMount = (cb, deps) => {
+  const componentJustMounted = useRef(true);
+  useEffect(() => {
+    if (!componentJustMounted.current) {
+      return cb();
+    }
+    componentJustMounted.current = false;
+  }, deps);
+};
+
 /** ====================================
    *      🔰 MediumClap
   ==================================== **/
@@ -159,12 +169,15 @@ const MediumClap = () => {
     clapCountTotalRef,
   });
 
+  useEffectAfterMount(() => {
+    animationTimeline.replay();
+  }, [count]);
+
   const handleClapClick = () => {
     animationTimeline.replay();
 
     updateClapState();
   };
-
   return (
     <button
       ref={setref}

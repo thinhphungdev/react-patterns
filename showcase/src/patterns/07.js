@@ -107,6 +107,12 @@ const useClapAnimation = ({ clapEl, countEl, clapTotalEl }) => {
   return animationTimeline;
 };
 
+const callFnsInSequence = (...fns) => {
+  return function (...args) {
+    fns.forEach((fn) => fn && fn(...args));
+  };
+};
+
 /**
  * useDOMRef Hook
  */
@@ -140,20 +146,25 @@ const useClapState = (initialState = INITIAL_STATE) => {
   }, [count, countTotal]);
 
   // props collection for 'click'
-  const togglerProps = {
-    onClick: updateClapState,
-    'aria-pressed': clapState.isClicked,
+  const getTogglerProps = (onClick, ...otherProps) => {
+    return {
+      onClick: callFnsInSequence(updateClapState, onClick),
+      'aria-pressed': clapState.isClicked,
+      ...otherProps,
+    };
   };
 
   // props collection for 'count'
-  const counterProps = {
-    count,
-    'aria-valuemax': MAXIMUM_USER_CLAP,
-    'aria-valuemin': 0,
-    'aria-valuenow': count,
+  const getCounterProps = () => {
+    return {
+      count,
+      'aria-valuemax': MAXIMUM_USER_CLAP,
+      'aria-valuemin': 0,
+      'aria-valuenow': count,
+    };
   };
 
-  return { clapState, updateClapState, togglerProps, counterProps };
+  return { clapState, updateClapState, getTogglerProps, getCounterProps };
 };
 
 /**
@@ -185,6 +196,7 @@ const ClapContainer = ({ children, setRef, handleClick, ...restProps }) => {
     </button>
   );
 };
+
 const ClapIcon = ({ isClicked }) => {
   return (
     <span>
@@ -199,6 +211,7 @@ const ClapIcon = ({ isClicked }) => {
     </span>
   );
 };
+
 const ClapCount = ({ count, setRef, ...restProps }) => {
   return (
     <span ref={setRef} className={styles.count} {...restProps}>
@@ -219,7 +232,7 @@ const CountTotal = ({ countTotal, setRef, ...restProps }) => {
  * Usage
  */
 const Usage = () => {
-  const { clapState, updateClapState, togglerProps, counterProps } =
+  const { clapState, updateClapState, getTogglerProps, getCounterProps } =
     useClapState();
 
   const { count, countTotal, isClicked } = clapState;
@@ -236,11 +249,26 @@ const Usage = () => {
     animationTimeline.replay();
   }, [count]);
 
+  function handleClick() {
+    console.log('Clicked');
+  }
+
   return (
-    <ClapContainer setRef={setRef} data-refkey='clapRef' {...togglerProps}>
+    <ClapContainer
+      setRef={setRef}
+      data-refkey='clapRef'
+      {...getTogglerProps({
+        'aria-pressed': false,
+        onClick: handleClick,
+      })}
+    >
       {/* <ClapIcon isClicked={isClicked} /> */}
       🇳🇬
-      <ClapCount setRef={setRef} data-refkey='clapCountRef' {...counterProps} />
+      <ClapCount
+        setRef={setRef}
+        data-refkey='clapCountRef'
+        {...getCounterProps()}
+      />
       <CountTotal
         countTotal={countTotal}
         setRef={setRef}
